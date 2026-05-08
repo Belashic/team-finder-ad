@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Избранное{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/project_list.css' %}">
+{% endblock %}
+
+{% block page_id %}favorites{% endblock %}
+{% block content %}
+<div class="project-container">
+    <div class="project-header">
+        <h2 class="project-title">Избранные проекты</h2>
+    </div>
+    <p class="project-subtitle">Проекты, которые вас заинтересовали</p>
+
+    <div class="projects-grid">
+        {% for project in projects %}
+        {% include 'includes/project-card.html' %}
+        {% empty %}
+        {% include 'includes/empty-project-card.html' with empty_title="Пока нет избранных проектов" empty_message="Добавляйте проекты в избранное, чтобы не потерять их" button_link="/projects/list" button_text="Посмотреть проекты" %}
+        {% endfor %}
+    </div>
+
+    {% if projects.paginator.num_pages > 1 %}
+    <div class="pagination">
+        {% if projects.has_previous %}
+            <a href="?page={{ projects.previous_page_number }}">← Назад</a>
+        {% endif %}
+        <span>Страница {{ projects.number }} из {{ projects.paginator.num_pages }}</span>
+        {% if projects.has_next %}
+            <a href="?page={{ projects.next_page_number }}">Вперёд →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% include 'includes/project-fav-toggle.js' %}
+</div>
+
+{% endblock %}

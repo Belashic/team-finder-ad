@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Редактирование профиля{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<link rel="stylesheet" href="{% static 'css/profile_edit.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-edit-container" style="overflow: hidden;">
+    <h2 class="form-title">Редактирование профиля</h2>
+    <form method="post" enctype="multipart/form-data" class="profile-edit-form" style="overflow: hidden;">
+        {% csrf_token %}
+
+        <div class="avatar-upload">
+            <div class="avatar-preview" onclick="document.getElementById('id_avatar').click()">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Аватар">
+                {% else %}
+                    <img src="{% static 'images/default-avatar.png' %}" alt="Аватар по умолчанию">
+                {% endif %}
+                <div class="overlay">
+                    <span>Изменить фото</span>
+                </div>
+            </div>
+            <div style="display: none;">
+                {{ form.avatar }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-field" style="min-width: 0; overflow: hidden;">
+                {{ form.name.label_tag }}
+                <input type="text" name="name" value="{{ form.name.value|default:'' }}" maxlength="20" required id="id_name" style="width: 100%; background: #f5f5fa; border: none; border-radius: 6px; padding: 10px; font-size: 14px; box-sizing: border-box;">
+                {{ form.name.errors }}
+            </div>
+            <div class="form-field" style="min-width: 0; overflow: hidden;">
+                {{ form.surname.label_tag }}
+                <input type="text" name="surname" value="{{ form.surname.value|default:'' }}" maxlength="20" required id="id_surname" style="width: 100%; background: #f5f5fa; border: none; border-radius: 6px; padding: 10px; font-size: 14px; box-sizing: border-box;">
+                {{ form.surname.errors }}
+            </div>
+        </div>
+
+        <div class="form-field" style="min-width: 0; overflow: hidden;">
+            {{ form.about.label_tag }}
+            {{ form.about }}
+        </div>
+
+        <div class="form-row">
+            <div class="form-field" style="min-width: 0; overflow: hidden;">
+                {{ form.phone.label_tag }}
+                {{ form.phone }}
+            </div>
+            <div class="form-field" style="min-width: 0; overflow: hidden;">
+                {{ form.github_url.label_tag }}
+                {{ form.github_url }}
+            </div>
+        </div>
+
+        {% if form.errors %}
+        <div class="form-errors">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <p style="word-break: break-all;">{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <a href="/users/{{ user.id }}" class="cancel-button">Отмена</a>
+            <button type="submit" class="save-button">Сохранить</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
