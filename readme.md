@@ -26,7 +26,7 @@ pip install -r requirements.txt
 cp .env_example .env
 
 Заполните параметры в .env:
-DJANGO_SECRET_KEY=ваш_ключ
+DJANGO_SECRET_KEY=ваш_ключ  # можно воспользоваться командой "openssl rand -base64 64" 
 DJANGO_DEBUG=True
 POSTGRES_DB=teamfinder
 POSTGRES_USER=postgres
