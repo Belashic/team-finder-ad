@@ -32,14 +32,14 @@
 
         <div class="form-row">
             <div class="form-field" style="min-width: 0; overflow: hidden;">
-                {{ form.name.label_tag }}
-                <input type="text" name="name" value="{{ form.name.value|default:'' }}" maxlength="20" required id="id_name" style="width: 100%; background: #f5f5fa; border: none; border-radius: 6px; padding: 10px; font-size: 14px; box-sizing: border-box;">
-                {{ form.name.errors }}
+                {{ form.first_name.label_tag }}
+                <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" maxlength="20" required id="id_first_name" style="width: 100%; background: #f5f5fa; border: none; border-radius: 6px; padding: 10px; font-size: 14px; box-sizing: border-box;">
+                {{ form.first_name.errors }}
             </div>
             <div class="form-field" style="min-width: 0; overflow: hidden;">
-                {{ form.surname.label_tag }}
-                <input type="text" name="surname" value="{{ form.surname.value|default:'' }}" maxlength="20" required id="id_surname" style="width: 100%; background: #f5f5fa; border: none; border-radius: 6px; padding: 10px; font-size: 14px; box-sizing: border-box;">
-                {{ form.surname.errors }}
+                {{ form.last_name.label_tag }}
+                <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" maxlength="20" required id="id_last_name" style="width: 100%; background: #f5f5fa; border: none; border-radius: 6px; padding: 10px; font-size: 14px; box-sizing: border-box;">
+                {{ form.last_name.errors }}
             </div>
         </div>
 
@@ -70,7 +70,7 @@
         {% endif %}
 
         <div class="form-actions">
-            <a href="/users/{{ user.id }}" class="cancel-button">Отмена</a>
+            <a href="{% url 'users:user_detail' user.id %}" class="cancel-button">Отмена</a>
             <button type="submit" class="save-button">Сохранить</button>
         </div>
     </form>

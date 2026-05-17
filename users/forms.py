@@ -1,36 +1,23 @@
 import re
+
 from django import forms
 from django.contrib.auth import authenticate
+
 from .models import User
-from team_finder.constants import (
-    USER_PHONE_REGEX, USER_PHONE_ALT_REGEX,
-    USER_PHONE_PREFIX, GITHUB_URL_PATTERN,
-)
+from team_finder.constants import GITHUB_URL_PATTERN
 
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label='Пароль')
-    name = forms.CharField(max_length=20, label='Имя', widget=forms.TextInput(attrs={'maxlength': 20}))
-    surname = forms.CharField(max_length=20, label='Фамилия', widget=forms.TextInput(attrs={'maxlength': 20}))
 
     class Meta:
         model = User
-        fields = ['name', 'surname', 'email', 'password']
+        fields = ['first_name', 'last_name', 'email', 'password']
         labels = {
             'email': 'Email',
+            'first_name': 'Имя',
+            'last_name': 'Фамилия',
         }
-
-    def clean_name(self):
-        name = self.cleaned_data.get('name', '')
-        if len(name) > 20:
-            raise forms.ValidationError('Имя не должно превышать 20 символов')
-        return name
-
-    def clean_surname(self):
-        surname = self.cleaned_data.get('surname', '')
-        if len(surname) > 20:
-            raise forms.ValidationError('Фамилия не должна превышать 20 символов')
-        return surname
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -60,41 +47,24 @@ class AuthenticationForm(forms.Form):
 
 
 class ProfileEditForm(forms.ModelForm):
-    name = forms.CharField(max_length=20, label='Имя', widget=forms.TextInput(attrs={'maxlength': 20}))
-    surname = forms.CharField(max_length=20, label='Фамилия', widget=forms.TextInput(attrs={'maxlength': 20}))
-
     class Meta:
         model = User
-        fields = ['name', 'surname', 'avatar', 'about', 'phone', 'github_url']
+        fields = ['first_name', 'last_name', 'avatar', 'about', 'phone', 'github_url']
         labels = {
             'avatar': 'Аватар',
             'about': 'О себе',
             'phone': 'Телефон',
             'github_url': 'GitHub',
+            'first_name': 'Имя',    
+            'last_name': 'Фамилия',
         }
-
-    def clean_name(self):
-        name = self.cleaned_data.get('name', '')
-        if len(name) > 20:
-            raise forms.ValidationError('Имя не должно превышать 20 символов')
-        return name
-
-    def clean_surname(self):
-        surname = self.cleaned_data.get('surname', '')
-        if len(surname) > 20:
-            raise forms.ValidationError('Фамилия не должна превышать 20 символов')
-        return surname
 
     def clean_phone(self):
         phone = self.cleaned_data.get('phone', '')
         if phone:
             phone = phone.strip()
-            if re.match(USER_PHONE_ALT_REGEX, phone):
-                phone = USER_PHONE_PREFIX + phone[1:]
-            if not re.match(USER_PHONE_REGEX, phone):
-                raise forms.ValidationError('Формат: +7XXXXXXXXXX или 8XXXXXXXXXX')
-            if User.objects.filter(phone=phone).exclude(pk=self.instance.pk).exists():
-                raise forms.ValidationError('Этот номер уже используется')
+            if re.match(r'^8\d{10}$', phone):
+                phone = '+7' + phone[1:]
         return phone
 
     def clean_github_url(self):

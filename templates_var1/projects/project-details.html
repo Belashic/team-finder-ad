@@ -32,7 +32,7 @@
 <div class="project-container" style="overflow: hidden;">
     <div class="project-card" style="overflow: hidden;">
         <div class="project-card-header">
-            <a href="/users/{{ project.owner.id }}">
+            <a href="{% url 'users:user_detail' project.owner.id %}">
                 <div class="project-card-header-left">
                     {% if project.owner.avatar %}
                         <img src="{{ project.owner.avatar.url }}" alt="Аватар автора" class="project-author-avatar">
@@ -40,7 +40,7 @@
                         <img src="{% static 'images/default-avatar.png' %}" alt="Аватар по умолчанию" class="project-author-avatar">
                     {% endif %}
                     <div class="project-meta" style="max-width: 200px; overflow: hidden;">
-                        <span class="project-author" style="word-break: break-all; max-width: 100%;">{{ project.owner.name }} {{ project.owner.surname }}</span>
+                        <span class="project-author" style="word-break: break-all; max-width: 100%;">{{ project.owner.first_name }} {{ project.owner.last_name }}</span>
                         <span class="project-date">{{ project.created_at|date:"d.m.Y" }}</span>
                     </div>
                 </div>
@@ -72,11 +72,11 @@
         <div class="project-actions">
             <a href="#"
                class="black-button black-button-share share-button"
-               data-url="/projects/{{ project.id }}">
+               data-url="{% url 'projects:project_detail' project.id %}">
                 {% include 'includes/svg/share.html' %}
             </a>
             {% if user.id == project.owner.id %}
-                <a href="/projects/{{ project.id }}/edit" class="black-button">
+                <a href="{% url 'projects:edit_project' project.id %}" class="black-button">
                     {% include 'includes/svg/pen.html' %}
                     Редактировать
                 </a>
@@ -91,7 +91,7 @@
                     <button id="participate-btn" class="black-button"
                             data-project="{{ project.id }}"
                             data-user-id="{{ request.user.id }}"
-                            data-user-name="{{ request.user.name }} {{ request.user.surname }}"
+                            data-user-name="{{ request.user.first_name }} {{ request.user.last_name }}"
                             data-user-avatar="{% if request.user.avatar %}{{ request.user.avatar.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
                     >
                         {% if request.user in project.participants.all %}
@@ -111,7 +111,7 @@
     <h3>Участники проекта (<span id="participants-count" style="display:inline">{{ project.participants.all|length }}</span>)</h3>
     <div id="participants-list" class="participants-list">
         {% for member in project.participants.all %}
-        <a href="/users/{{ member.id }}" id="participant-{{ member.id }}">
+        <a href="{% url 'users:user_detail' member.id %}" id="participant-{{ member.id }}">
             <div class="participant-item" style="max-width: 100%;">
                 {% if member.avatar %}
                     <img src="{{ member.avatar.url }}" alt="Аватар" class="participant-avatar">
@@ -119,7 +119,7 @@
                     <img src="{% static 'images/default-avatar.png' %}" alt="Аватар по умолчанию" class="participant-avatar">
                 {% endif %}
                 <div class="participant-info" style="max-width: 150px; overflow: hidden;">
-                    <span class="participant-name" style="word-break: break-all;">{{ member.name }} {{ member.surname }}</span>
+                    <span class="participant-name" style="word-break: break-all;">{{ member.first_name }} {{ member.last_name }}</span>
                     <span class="participant-role">
                         {% if member.id == project.owner.id %}Автор проекта{% else %}Участник{% endif %}
                     </span>

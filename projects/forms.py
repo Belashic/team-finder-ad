@@ -1,6 +1,8 @@
 from django import forms
-from .models import Project
+
 from team_finder.constants import GITHUB_URL_PATTERN
+
+from .models import Project
 
 
 class ProjectForm(forms.ModelForm):

@@ -124,3 +124,10 @@ docker compose down               # Остановить БД
 - PostgreSQL 16 (Docker)
 - Pillow (аватарки)
 - HTML, CSS, JavaScript
+
+
+## Данные автора
+
+ссылка на githab - https://github.com/Belashic
+намер: телефона 89220627377
+почта: igor_2007@outlook.com

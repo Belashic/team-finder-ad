@@ -1,12 +1,16 @@
 from pathlib import Path
+
 from decouple import config
-from .constants import LANGUAGE_CODE, TIME_ZONE
+
+from team_finder.constants import LANGUAGE_CODE, TIME_ZONE
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='').split(',')
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -70,6 +74,7 @@ if not DEBUG:
 
 AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/users/login/'
+
 
 LANGUAGE_CODE = LANGUAGE_CODE
 TIME_ZONE = TIME_ZONE

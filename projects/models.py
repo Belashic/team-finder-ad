@@ -1,8 +1,11 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
+
 from team_finder.constants import (
-    PROJECT_NAME_MAX_LENGTH, PROJECT_STATUS_MAX_LENGTH,
-    PROJECT_STATUS_CHOICES, PROJECT_STATUS_OPEN,
+    PROJECT_NAME_MAX_LENGTH,
+    PROJECT_STATUS_CHOICES,
+    PROJECT_STATUS_MAX_LENGTH,
+    PROJECT_STATUS_OPEN,
 )
 
 
