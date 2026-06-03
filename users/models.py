@@ -2,16 +2,16 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.validators import RegexValidator
 from django.db import models
 
-from .managers import UserManager
-from .utils import generate_avatar
-
 from team_finder.constants import (
     AVATAR_UPLOAD_DIR,
     USER_ABOUT_MAX_LENGTH,
     USER_FIRST_NAME_MAX_LENGTH,
-    USER_PHONE_MAX_LENGTH,
     USER_LAST_NAME_MAX_LENGTH,
+    USER_PHONE_MAX_LENGTH,
 )
+
+from .managers import UserManager
+from .utils import generate_avatar
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -19,13 +19,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=USER_FIRST_NAME_MAX_LENGTH, verbose_name='Имя')
     last_name = models.CharField(max_length=USER_LAST_NAME_MAX_LENGTH, verbose_name='Фамилия')
     avatar = models.ImageField(upload_to=AVATAR_UPLOAD_DIR, blank=True, verbose_name='Аватар')
-    
+
     phone = models.CharField(
         max_length=USER_PHONE_MAX_LENGTH,
         blank=True,
         unique=True,
-        null=True,
-        validators=[ 
+        default='',
+        validators=[
             RegexValidator(
                 regex=r'^\+7\d{10}$',
                 message='Телефон должен быть в формате +7XXXXXXXXXX'
@@ -33,7 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ],
         verbose_name='Телефон'
     )
-    
+
     github_url = models.URLField(blank=True, verbose_name='GitHub')
     about = models.TextField(max_length=USER_ABOUT_MAX_LENGTH, blank=True, verbose_name='О себе')
     is_active = models.BooleanField(default=True, verbose_name='Активен')

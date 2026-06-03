@@ -3,9 +3,9 @@ from django.db import models
 
 from team_finder.constants import (
     PROJECT_NAME_MAX_LENGTH,
-    PROJECT_STATUS_CHOICES,
     PROJECT_STATUS_MAX_LENGTH,
     PROJECT_STATUS_OPEN,
+    ProjectStatus,
 )
 
 
@@ -22,7 +22,7 @@ class Project(models.Model):
     github_url = models.URLField(blank=True, verbose_name='GitHub')
     status = models.CharField(
         max_length=PROJECT_STATUS_MAX_LENGTH,
-        choices=PROJECT_STATUS_CHOICES,
+        choices=ProjectStatus.choices,
         default=PROJECT_STATUS_OPEN,
         verbose_name='Статус',
     )

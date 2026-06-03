@@ -3,8 +3,10 @@ import re
 from django import forms
 from django.contrib.auth import authenticate
 
-from .models import User
 from team_finder.constants import GITHUB_URL_PATTERN
+from team_finder.utils import validate_github_url
+
+from users.models import User
 
 
 class RegistrationForm(forms.ModelForm):
@@ -55,7 +57,7 @@ class ProfileEditForm(forms.ModelForm):
             'about': 'О себе',
             'phone': 'Телефон',
             'github_url': 'GitHub',
-            'first_name': 'Имя',    
+            'first_name': 'Имя',
             'last_name': 'Фамилия',
         }
 
@@ -69,9 +71,7 @@ class ProfileEditForm(forms.ModelForm):
 
     def clean_github_url(self):
         url = self.cleaned_data.get('github_url', '')
-        if url and GITHUB_URL_PATTERN not in url:
-            raise forms.ValidationError('Ссылка должна вести на github.com')
-        return url
+        return validate_github_url(url)
 
 
 class PasswordChangeForm(forms.Form):
