@@ -4,12 +4,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 
-from team_finder.constants import (
-    PROJECT_STATUS_CLOSED,
-    PROJECT_STATUS_OPEN,
-    PROJECTS_PER_PAGE,
-)
-from team_finder.utils import paginate, validate_github_url
+from team_finder.constants import PROJECTS_PER_PAGE
+from team_finder.utils import paginate
 
 from .forms import ProjectForm
 from .models import Project
@@ -32,7 +28,7 @@ def create_project(request):
         form = ProjectForm()
         return render(request, 'projects/create-project.html', {'form': form, 'is_edit': False})
 
-    form = ProjectForm(request.POST or None)
+    form = ProjectForm(request.POST)
     if not form.is_valid():
         return render(request, 'projects/create-project.html', {'form': form, 'is_edit': False})
 
@@ -51,7 +47,7 @@ def edit_project(request, project_id):
         form = ProjectForm(instance=project)
         return render(request, 'projects/create-project.html', {'form': form, 'is_edit': True})
 
-    form = ProjectForm(request.POST or None, instance=project)
+    form = ProjectForm(request.POST, instance=project)
     if not form.is_valid():
         return render(request, 'projects/create-project.html', {'form': form, 'is_edit': True})
 
@@ -64,12 +60,12 @@ def edit_project(request, project_id):
 def complete_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id, owner=request.user)
 
-    if project.status != PROJECT_STATUS_OPEN:
+    if project.status != Project.Status.OPEN:
         return JsonResponse({'status': 'error'}, status=400)
 
-    project.status = PROJECT_STATUS_CLOSED
+    project.status = Project.Status.CLOSED
     project.save()
-    return JsonResponse({'status': 'ok', 'project_status': PROJECT_STATUS_CLOSED})
+    return JsonResponse({'status': 'ok', 'project_status': Project.Status.CLOSED})
 
 
 @login_required
@@ -77,7 +73,7 @@ def complete_project(request, project_id):
 def toggle_participate(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
-    if project.status == PROJECT_STATUS_CLOSED and request.user not in project.participants.all():
+    if project.status == Project.Status.CLOSED and request.user not in project.participants.all():
         return JsonResponse({'status': 'error', 'message': 'Проект закрыт'}, status=400)
 
     if request.user in project.participants.all():

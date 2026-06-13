@@ -13,8 +13,8 @@ def generate_avatar(letter):
     bg_color = random.choice(AVATAR_BG_COLORS)
 
     size = 1000
-    img = Image.new('RGB', (size, size), bg_color)
-    draw = ImageDraw.Draw(img)
+    image = Image.new('RGB', (size, size), bg_color)
+    draw = ImageDraw.Draw(image)
 
     font = None
     font_size = 700
@@ -54,9 +54,9 @@ def generate_avatar(letter):
 
     draw.text((x, y), letter, fill='white', font=font)
 
-    img = img.resize((400, 400), Image.Resampling.LANCZOS)
+    image = image.resize((400, 400), Image.Resampling.LANCZOS)
 
-    buf = io.BytesIO()
-    img.save(buf, format='PNG')
+    buffer = io.BytesIO()
+    image.save(buffer, format='PNG')
 
-    return ContentFile(buf.getvalue(), name=f'{letter}.png')
+    return ContentFile(buffer.getvalue(), name=f'{letter}.png')

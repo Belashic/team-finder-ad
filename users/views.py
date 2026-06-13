@@ -8,47 +8,39 @@ from team_finder.constants import (
     FILTER_OWNERS_OF_FAVORITES,
     FILTER_OWNERS_OF_PARTICIPATING,
     FILTER_PARTICIPANTS_OF_MY,
+    MSG_PASSWORD_CHANGED,
+    MSG_PROFILE_UPDATED,
+    MSG_WELCOME,
     USERS_PER_PAGE,
 )
 from team_finder.utils import paginate
-
-from .forms import (
+from users.forms import (
     AuthenticationForm,
     PasswordChangeForm,
     ProfileEditForm,
     RegistrationForm,
 )
-from .models import User
+from users.models import User
 
 
 def register(request):
-    if request.method == 'GET':
-        form = RegistrationForm()
-        return render(request, 'users/register.html', {'form': form})
-
-    form = RegistrationForm(request.POST or None)
-    if not form.is_valid():
-        return render(request, 'users/register.html', {'form': form})
-
-    user = form.save()
-    return redirect('users:login')
+    form = RegistrationForm(request.POST or None) if request.method == 'POST' else RegistrationForm()
+    if request.method == 'POST' and form.is_valid():
+        user = form.save()
+        return redirect('users:login')
+    return render(request, 'users/register.html', {'form': form})
 
 
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('projects:project_list')
 
-    if request.method == 'GET':
-        form = AuthenticationForm()
-        return render(request, 'users/login.html', {'form': form})
-
-    form = AuthenticationForm(request.POST or None)
-    if not form.is_valid():
-        return render(request, 'users/login.html', {'form': form})
-
-    login(request, form.user)
-    next_url = request.GET.get('next', '/projects/list/')
-    return redirect(next_url)
+    form = AuthenticationForm(request.POST or None) if request.method == 'POST' else AuthenticationForm()
+    if request.method == 'POST' and form.is_valid():
+        login(request, form.user)
+        next_url = request.GET.get('next', '/projects/list/')
+        return redirect(next_url)
+    return render(request, 'users/login.html', {'form': form})
 
 
 def logout_view(request):
@@ -69,31 +61,29 @@ def profile_view(request, user_id):
 
 @login_required
 def edit_profile_view(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, MSG_PROFILE_UPDATED)
+            return redirect('users:user_detail', user_id=request.user.pk)
+    else:
         form = ProfileEditForm(instance=request.user)
-        return render(request, 'users/edit_profile.html', {'form': form})
-
-    form = ProfileEditForm(request.POST or None, request.FILES or None, instance=request.user)
-    if not form.is_valid():
-        return render(request, 'users/edit_profile.html', {'form': form})
-
-    form.save()
-    return redirect('users:user_detail', user_id=request.user.pk)
+    return render(request, 'users/edit_profile.html', {'form': form})
 
 
 @login_required
 def change_password_view(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, MSG_PASSWORD_CHANGED)
+            return redirect('users:user_detail', user_id=request.user.pk)
+    else:
         form = PasswordChangeForm(request.user)
-        return render(request, 'users/change_password.html', {'form': form})
-
-    form = PasswordChangeForm(request.user, request.POST or None)
-    if not form.is_valid():
-        return render(request, 'users/change_password.html', {'form': form})
-
-    user = form.save()
-    update_session_auth_hash(request, user)
-    return redirect('users:user_detail', user_id=request.user.pk)
+    return render(request, 'users/change_password.html', {'form': form})
 
 
 def participants_view(request):

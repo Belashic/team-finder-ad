@@ -5,7 +5,6 @@ from django.contrib.auth import authenticate
 
 from team_finder.constants import GITHUB_URL_PATTERN
 from team_finder.utils import validate_github_url
-
 from users.models import User
 
 
@@ -15,18 +14,6 @@ class RegistrationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'password']
-        labels = {
-            'email': 'Email',
-            'first_name': 'Имя',
-            'last_name': 'Фамилия',
-        }
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password'])
-        if commit:
-            user.save()
-        return user
 
 
 class AuthenticationForm(forms.Form):
@@ -52,14 +39,6 @@ class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'avatar', 'about', 'phone', 'github_url']
-        labels = {
-            'avatar': 'Аватар',
-            'about': 'О себе',
-            'phone': 'Телефон',
-            'github_url': 'GitHub',
-            'first_name': 'Имя',
-            'last_name': 'Фамилия',
-        }
 
     def clean_phone(self):
         phone = self.cleaned_data.get('phone', '')

@@ -13,14 +13,6 @@ PROJECT_NAME_MAX_LENGTH = 255
 PROJECT_STATUS_MAX_LENGTH = 6
 PROJECT_DESCRIPTION_MAX_LENGTH = 2000
 
-class ProjectStatus(models.TextChoices):
-    OPEN = 'open', 'Открыт'
-    CLOSED = 'closed', 'Закрыт'
-
-PROJECT_STATUS_OPEN = ProjectStatus.OPEN.value
-PROJECT_STATUS_CLOSED = ProjectStatus.CLOSED.value
-PROJECT_STATUS_CHOICES = ProjectStatus.choices
-
 AVATAR_SIZE = (400, 400)
 AVATAR_FONT_SIZE = 300
 AVATAR_UPLOAD_DIR = 'avatars/'

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
@@ -14,7 +14,8 @@ from .managers import UserManager
 from .utils import generate_avatar
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractUser):
+    username = None
     email = models.EmailField(unique=True, verbose_name='Email')
     first_name = models.CharField(max_length=USER_FIRST_NAME_MAX_LENGTH, verbose_name='Имя')
     last_name = models.CharField(max_length=USER_LAST_NAME_MAX_LENGTH, verbose_name='Фамилия')
@@ -23,7 +24,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(
         max_length=USER_PHONE_MAX_LENGTH,
         blank=True,
-        unique=True,
         default='',
         validators=[
             RegexValidator(

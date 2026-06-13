@@ -4,12 +4,14 @@ from django.db import models
 from team_finder.constants import (
     PROJECT_NAME_MAX_LENGTH,
     PROJECT_STATUS_MAX_LENGTH,
-    PROJECT_STATUS_OPEN,
-    ProjectStatus,
 )
 
 
 class Project(models.Model):
+    class Status(models.TextChoices):
+        OPEN = 'open', 'Открыт'
+        CLOSED = 'closed', 'Закрыт'
+
     name = models.CharField(max_length=PROJECT_NAME_MAX_LENGTH, verbose_name='Название')
     description = models.TextField(blank=True, verbose_name='Описание')
     owner = models.ForeignKey(
@@ -22,8 +24,8 @@ class Project(models.Model):
     github_url = models.URLField(blank=True, verbose_name='GitHub')
     status = models.CharField(
         max_length=PROJECT_STATUS_MAX_LENGTH,
-        choices=ProjectStatus.choices,
-        default=PROJECT_STATUS_OPEN,
+        choices=Status.choices,
+        default=Status.OPEN,
         verbose_name='Статус',
     )
     participants = models.ManyToManyField(
